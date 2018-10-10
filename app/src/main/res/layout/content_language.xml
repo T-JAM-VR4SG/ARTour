@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="bmtreuherz.artour.Activities.LanguageActivity"
+    tools:showIn="@layout/app_bar_language">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/text_view_id"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:text="Available Languages"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:gravity="center_horizontal"
+            android:typeface="sans"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="34dp"
+        android:checkedButton="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        
+        <CheckBox
+            android:id="@+id/checkEnglish"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:onClick="onCheckboxClicked"
+            android:text="@string/english"
+            android:textColorLink="@color/colorPrimary" />
+
+        <CheckBox
+            android:id="@+id/checkSpanish"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:onClick="onCheckboxClicked"
+            android:text="@string/spanish"
+            android:textColorLink="@color/colorPrimary" />
+
+        <CheckBox
+            android:id="@+id/checkChinese"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:onClick="onCheckboxClicked"
+            android:text="Portuguese"
+            android:textColorLink="@color/colorPrimary" />
+
+
+
+    </RadioGroup>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:text="Future Languages"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:typeface="sans"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="Chinese"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:gravity="left"
+            android:typeface="sans"
+            android:layout_marginTop="280dp"
+
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="Japanese"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="Hatian Creole"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="Yoruba"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="Arabic"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="Vietnamese"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="Italian"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="German"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="French"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+
+        <TextView
+            android:id="@id/text"
+            android:layout_height="match_parent"
+            android:layout_width= "match_parent"
+            android:layout_marginLeft="45dp"
+            android:text="Russian"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:typeface="sans"
+            />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

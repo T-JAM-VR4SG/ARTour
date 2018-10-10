@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">ARTour</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!--Home Page-->
+    <string name="home_title">AR Campus Tour</string>
+    <string name="home_description">Welcome to your own personal campus tour! To get started, use the menu on the left
+                                    to find points of interest around campus. You can use the map or view markers
+                                    overlaid on your camera to direct you. Have fun!</string>
+
+    <!--Nav -->
+    <string name="nav_home">Home</string>
+    <string name="nav_map">Map</string>
+    <string name="google_maps_API_key">AIzaSyD4IGlQ73tFEKFh8qkn3XGiaUxpbIhLrz4</string>
+    <string name="nav_cam">Camera Overlay</string>
+    <string name="nav_features_in_range">Nearby Features</string>
+    <string name="nav_prefs">Preferences</string>
+    <string name="nav_language">Language</string>
+    <string name="title_feature_list">Features</string>
+    <string name="title_feature_detail">Feature Detail</string>
+
+    <!--Features In Range-->
+    <string name="features_title">Nearby Features</string>
+
+    <!--Languages-->
+    <string name="english">English</string>
+    <string name="spanish">Spanish</string>
+    <string name="chinese">Chinese</string>
+
+    <!--Description-->
+    <string name="description_title">Feature Description</string>
+
+</resources>
