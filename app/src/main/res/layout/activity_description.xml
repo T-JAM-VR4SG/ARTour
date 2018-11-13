@@ -56,7 +56,7 @@
                 android:id="@+id/audio_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="22dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/play_button_icon"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -82,16 +82,16 @@
                 android:id="@+id/feature_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginBottom="10dp"
+                android:text="Obtaining data...\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
                 android:textSize="18sp"
-                android:text="Here is a description of this feature. Blah Blah Blah it should look okay."
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/audio_button"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/audio_button" />
 
 
         </android.support.constraint.ConstraintLayout>

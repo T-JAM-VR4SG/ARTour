@@ -7,11 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
-import android.view.MenuItem
-import android.animation.ValueAnimator
 import android.content.DialogInterface
 import bmtreuherz.artour.R
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -26,9 +21,6 @@ import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import bmtreuherz.artour.ARTourApplication
-import bmtreuherz.artour.DTOs.Feature
-import bmtreuherz.artour.R.id.drawer_layout
-import bmtreuherz.artour.R.id.nav_view
 import bmtreuherz.artour.Utilities.*
 import java.util.jar.Manifest
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -167,7 +159,6 @@ class MapActivity : NavigableActivity() {
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15.5f))
             }
         }
-
     }
 
     private fun setUpClusterer() {

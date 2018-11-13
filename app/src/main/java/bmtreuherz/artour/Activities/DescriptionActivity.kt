@@ -51,7 +51,6 @@ class DescriptionActivity : AppCompatActivity() {
                 var jsonObject = jsonString.asJsonObject
                 var languagesURL = jsonObject.getAsJsonObject("guid").get("rendered").toString()
                 languagesURL = languagesURL.substring(1, languagesURL.length - 1)
-                println(languagesURL)
 
                 var beaconID = intent.getIntExtra(BEACON_ID, -1)
 
@@ -104,7 +103,7 @@ class DescriptionActivity : AppCompatActivity() {
                 Fuel.get(descriptionURL).response {
                     request, response, result ->
                     result.success {
-                        featureTitleTV.text = String(response.data)
+                        featureTitleTV.setText(String(response.data))
                     }
                 }
             }
@@ -116,7 +115,6 @@ class DescriptionActivity : AppCompatActivity() {
 
     fun getAudio() {
         var url = searchURL + filename + ".mp3"
-
         Fuel.get(url).response {
             request, response, result ->
             result.success {
@@ -126,6 +124,18 @@ class DescriptionActivity : AppCompatActivity() {
                 var jsonObject = jsonString.asJsonObject
                 audioURL = jsonObject.getAsJsonObject("guid").get("rendered").toString()
                 audioURL = audioURL.substring(1, audioURL.length - 1)
+
+                var F = File(getFilesDir(), "test.mp3")
+                Fuel.download(audioURL).destination { response, url ->
+                    F
+                }.response { req, res, result ->
+
+                }
+
+                audioPlayer = MediaPlayer()
+                audioPlayer.setDataSource(F.absolutePath)
+                audioPlayer.prepare()
+                audio_setup()
             }
         }
     }
@@ -157,9 +167,7 @@ class DescriptionActivity : AppCompatActivity() {
         playButton = findViewById(R.id.audio_button)
 
         getJson()
-    }
-
-
+}
 
     override fun onResume() {
         super.onResume()
@@ -168,8 +176,11 @@ class DescriptionActivity : AppCompatActivity() {
 
         // hacky
         while (filename == "") {
-
         }
+
+        getDescription()
+        getAudio()
+        getImage()
 
         var feature: Feature? = null
         var features = HttpClient.getFeatures()
@@ -179,9 +190,6 @@ class DescriptionActivity : AppCompatActivity() {
             }
         }
 
-        getDescription()
-        getAudio()
-        getImage()
 
 //        while (imageURL == "") {
 ////
@@ -201,21 +209,19 @@ class DescriptionActivity : AppCompatActivity() {
         //featureImage.setImageDrawable(image)
         //featureImage.setImageURI(Uri.fromFile(image))
         //featureImage.setImageDrawable(Drawable.createFromPath(image.absolutePath))
-        // hacky
-        while(audioURL == "") {
-        }
 
-        var F = File(getFilesDir(), "test.mp3")
-        Fuel.download(audioURL).destination { response, url ->
-            F
-        }.response { req, res, result ->
 
-        }
-
-        audioPlayer = MediaPlayer()
-        audioPlayer.setDataSource(F.absolutePath)
-        audioPlayer.prepare()
-        audio_setup()
+//        var F = File(getFilesDir(), "test.mp3")
+//        Fuel.download(audioURL).destination { response, url ->
+//            F
+//        }.response { req, res, result ->
+//
+//        }
+//
+//        audioPlayer = MediaPlayer()
+//        audioPlayer.setDataSource(F.absolutePath)
+//        audioPlayer.prepare()
+//        audio_setup()
 
 
         //featureImage.setImageDrawable(feature?.imageLink);
@@ -289,8 +295,14 @@ class DescriptionActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         seekHandler.removeCallbacks(run)
-        audioPlayer.stop()
-        audioPlayer.release()
+
+        try {
+            audioPlayer.stop()
+            audioPlayer.release()
+        }
+        catch(e: Exception) {
+
+        }
     }
 }
 

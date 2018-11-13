@@ -1,16 +1,74 @@
 package bmtreuherz.artour.Activities
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import bmtreuherz.artour.R
-import kotlinx.android.synthetic.main.content_language.*
+import android.widget.RadioGroup
+import android.widget.RadioButton
+import bmtreuherz.artour.Utilities.BeaconEventBroadcaster.context
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.result.failure
+import com.github.kittinunf.result.success
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 
 /**
  * Created by Ben on 3/21/2018.
  */
 class LanguageActivity : NavigableActivity() {
+
+    private lateinit var radioGroup : RadioGroup
+
+    var searchURL = "https://ufind.clas.ufl.edu/wp-json/wp/v2/media?search="
+    var filename = ""
+    var jsonObject = JsonObject()
+    var languages = ArrayList<String>()
+    var size = 0
+    var radioButtons = HashMap<Int, String>()
+
+    fun parse(toParse: JsonObject)  {
+        var set = toParse.entrySet()
+
+        set.forEach {
+            var toAdd = it.key.toString()
+            languages.add(toAdd)
+        }
+    }
+
+    fun getLanguages() {
+        // Get location of JSON
+        val url = searchURL + "Languages.json"
+
+        Fuel.get(url).response { request, response, result ->
+            result.success {
+                var json = String(response.data)
+                json = json.substring(1, json.length - 1)
+                val jsonString = JsonParser().parse(json)
+                var jsonObject2 = jsonString.asJsonObject
+                var languagesURL = jsonObject2.getAsJsonObject("guid").get("rendered").toString()
+                languagesURL = languagesURL.substring(1, languagesURL.length - 1)
+
+                // Find location of description file
+                Fuel.get(languagesURL).response {
+                    request, response, result ->
+                    result.success {
+                        var json = String(response.data)
+                        val jsonString = JsonParser().parse(json)
+                        jsonObject = jsonString.asJsonObject.getAsJsonObject("Languages")
+                        size = jsonObject.size()
+                    }
+
+                    result.failure {
+                        filename = "fail"
+                    }
+                }
+            }
+
+            result.failure {
+                filename = "fail"
+            }
+        }
+    }
 
     override fun getCurrentMenuItemID(): Int {
         return R.id.nav_language
@@ -22,60 +80,57 @@ class LanguageActivity : NavigableActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        radioGroup = findViewById(R.id.radioGroup)
+
+        if (size == 0) {
+            getLanguages()
+
+            while (jsonObject.size() == 0) {
+
+            }
+
+            parse(jsonObject)
+        }
+
+        languages.forEach {
+            var toAdd = RadioButton(context)
+            toAdd.id = View.generateViewId()
+            toAdd.setText(it)
+            toAdd.setOnClickListener {
+                onCheckboxClicked(it)
+            }
+            radioButtons.put(toAdd.id, it)
+            radioGroup.addView(toAdd)
+        }
     }
 
     override fun onResume() {
         super.onResume()
 
-        when (Preferences.getLang()){
-            "English" -> {
-                checkEnglish.isChecked = true
-                checkSpanish.isChecked = false
-                checkChinese.isChecked = false
+        var currLang = Preferences.getLang()
 
-            }
-            "Spanish" -> {
-                checkEnglish.isChecked = false
-                checkSpanish.isChecked = true
-                checkChinese.isChecked = false
+        radioButtons.forEach {
+            var view : RadioButton = radioGroup.findViewById(it.key)
 
-            }
-            "Chinese" -> {
-                checkEnglish.isChecked = false
-                checkSpanish.isChecked = false
-                checkChinese.isChecked = true
-            }
+            view.isChecked = (it.value == currLang)
         }
     }
 
     //  Sets other checkboxes empty when one checkbox is clicked
     //Ensures only one option can be selected
     fun onCheckboxClicked(view: View) {
+        var currID = view.getId()
 
-        when (view.getId()) {
+        radioButtons.forEach {
+            var view : RadioButton = radioGroup.findViewById(it.key)
 
-            R.id.checkEnglish -> {
-
-                //setLanguage("English")
-                checkChinese.setChecked(false)
-                checkSpanish.setChecked(false)
-                Preferences.setLang("English")
+            if (view.id == currID) {
+                Preferences.setLang(it.value)
             }
-            R.id.checkSpanish -> {
-                //setLanguage("Spanish")
-
-                checkChinese.setChecked(false)
-                checkEnglish.setChecked(false)
-                Preferences.setLang("Spanish")
+            else {
+                view.isChecked = false
             }
-            R.id.checkChinese -> {
-                //setLanguage("Chinese")
-
-                checkEnglish.setChecked(false)
-                checkSpanish.setChecked(false)
-                Preferences.setLang("Chinese")
-            }
-
         }
+
     }
 }
