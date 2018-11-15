@@ -14,6 +14,7 @@ import com.github.kittinunf.result.success
 import com.github.kittinunf.result.failure
 import com.google.gson.JsonParser
 import java.io.File
+import android.net.Uri
 
 class DescriptionActivity : AppCompatActivity() {
 
@@ -172,63 +173,30 @@ class DescriptionActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        var beaconID = intent.getIntExtra(BEACON_ID, -1)
-
         // hacky
         while (filename == "") {
         }
 
-        getDescription()
-        getAudio()
         getImage()
 
-        var feature: Feature? = null
-        var features = HttpClient.getFeatures()
-        features.forEach {
-            if (it.beaconID == beaconID){
-                feature = it
-            }
-        }
-
-
 //        while (imageURL == "") {
-////
-////        }
-////
-////        var image = File(getFilesDir(), "image.jpg")
-////        Fuel.download(imageURL).destination { response, url ->
-////            image
-////        }.response { req, res, result ->
-////
-////        }
-
-        //val uri = "@drawable/"+feature?.imageLink
-        //val imageResource = resources.getIdentifier(image.absolutePath, null, packageName)
-        //val res = resources.getDrawable(imageResource)
-        //featureImage.setImageDrawable(res)
-        //featureImage.setImageDrawable(image)
-        //featureImage.setImageURI(Uri.fromFile(image))
-        //featureImage.setImageDrawable(Drawable.createFromPath(image.absolutePath))
-
-
-//        var F = File(getFilesDir(), "test.mp3")
-//        Fuel.download(audioURL).destination { response, url ->
-//            F
-//        }.response { req, res, result ->
 //
 //        }
 //
-//        audioPlayer = MediaPlayer()
-//        audioPlayer.setDataSource(F.absolutePath)
-//        audioPlayer.prepare()
-//        audio_setup()
+//        var image = File(getFilesDir(), "image.jpg")
+//        Fuel.download(imageURL).destination { response, url ->
+//            image
+//        }.response { req, res, result ->
+//
+//        }
 
+        getDescription()
+        getAudio()
 
-        //featureImage.setImageDrawable(feature?.imageLink);
-        //featureImage.setImageDrawable()
-        //change image here
+//        var params = featureImage.layoutParams
+//        featureImage.setImageURI(Uri.fromFile(image))
+//        featureImage.layoutParams = params
 
-        Log.d(TAG, "Found feature: " + feature?.name)
     }
 
 

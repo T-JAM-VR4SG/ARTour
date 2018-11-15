@@ -20,10 +20,9 @@ class LanguageActivity : NavigableActivity() {
     private lateinit var radioGroup : RadioGroup
 
     var searchURL = "https://ufind.clas.ufl.edu/wp-json/wp/v2/media?search="
-    var filename = ""
     var jsonObject = JsonObject()
-    var languages = ArrayList<String>()
-    var size = 0
+    var availableLanguages = ArrayList<String>()
+    var numberOfLanguages = 0
     var radioButtons = HashMap<Int, String>()
 
     fun parse(toParse: JsonObject)  {
@@ -31,7 +30,7 @@ class LanguageActivity : NavigableActivity() {
 
         set.forEach {
             var toAdd = it.key.toString()
-            languages.add(toAdd)
+            availableLanguages.add(toAdd)
         }
     }
 
@@ -55,17 +54,15 @@ class LanguageActivity : NavigableActivity() {
                         var json = String(response.data)
                         val jsonString = JsonParser().parse(json)
                         jsonObject = jsonString.asJsonObject.getAsJsonObject("Languages")
-                        size = jsonObject.size()
+                        numberOfLanguages = jsonObject.size()
                     }
 
                     result.failure {
-                        filename = "fail"
                     }
                 }
             }
 
             result.failure {
-                filename = "fail"
             }
         }
     }
@@ -82,7 +79,7 @@ class LanguageActivity : NavigableActivity() {
         super.onCreate(savedInstanceState)
         radioGroup = findViewById(R.id.radioGroup)
 
-        if (size == 0) {
+        if (numberOfLanguages == 0) {
             getLanguages()
 
             while (jsonObject.size() == 0) {
@@ -92,7 +89,7 @@ class LanguageActivity : NavigableActivity() {
             parse(jsonObject)
         }
 
-        languages.forEach {
+        availableLanguages.forEach {
             var toAdd = RadioButton(context)
             toAdd.id = View.generateViewId()
             toAdd.setText(it)
