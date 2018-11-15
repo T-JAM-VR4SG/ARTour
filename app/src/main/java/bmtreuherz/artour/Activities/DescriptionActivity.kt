@@ -6,15 +6,15 @@ import android.util.Log
 import bmtreuherz.artour.DTOs.Feature
 import bmtreuherz.artour.R
 import bmtreuherz.artour.Utilities.HttpClient
-import kotlinx.android.synthetic.main.activity_description.*
-import kotlinx.android.synthetic.main.nav_header.*
-import bmtreuherz.artour.R.id.imageView
-import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Handler
-import android.view.View
 import android.widget.*
-
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.result.success
+import com.github.kittinunf.result.failure
+import com.google.gson.JsonParser
+import java.io.File
+import android.net.Uri
 
 class DescriptionActivity : AppCompatActivity() {
 
@@ -29,10 +29,132 @@ class DescriptionActivity : AppCompatActivity() {
     var seekHandler = Handler()
     var wasPlaying = false
 
+    var filename = ""
+    var searchURL = "https://ufind.clas.ufl.edu/wp-json/wp/v2/media?search="
+    var audioURL = ""
+    var imageURL = ""
+    var imageName = ""
 
     companion object {
         val TAG = DescriptionActivity::class.java.simpleName
         val BEACON_ID = "BeaconID"
+    }
+
+    fun getJson() {
+        // Get location of JSON
+        val url = searchURL + "Languages.json"
+
+        Fuel.get(url).response { request, response, result ->
+            result.success {
+                var json = String(response.data)
+                json = json.substring(1, json.length - 1)
+                val jsonString = JsonParser().parse(json)
+                var jsonObject = jsonString.asJsonObject
+                var languagesURL = jsonObject.getAsJsonObject("guid").get("rendered").toString()
+                languagesURL = languagesURL.substring(1, languagesURL.length - 1)
+
+                var beaconID = intent.getIntExtra(BEACON_ID, -1)
+
+                // Find location of description file
+                Fuel.get(languagesURL).response {
+                    request, response, result ->
+                    result.success {
+                        var json = String(response.data)
+                        val jsonString = JsonParser().parse(json)
+                        var jsonObject = jsonString.asJsonObject
+                        var test = jsonObject.getAsJsonObject("Locations").getAsJsonObject(beaconID.toString())
+                        descriptionTitleTV.text = test.get("Name").toString()
+                        descriptionTitleTV.text = descriptionTitleTV.text.substring(1, descriptionTitleTV.text.length-1)
+
+                        var name = test.get("Filename").toString()
+
+                        var currLang = Preferences.getLang()
+                        var prefix = jsonObject.getAsJsonObject("Languages").getAsJsonObject(currLang).get("Prefix").toString()
+
+                        imageName = name.substring(1, name.length-1)
+                        filename = prefix.substring(1, prefix.length-1) + "_" + imageName
+                    }
+
+                    result.failure {
+                        filename = "fail"
+                        descriptionTitleTV.text = "Unable to retrieve data"
+                    }
+                }
+            }
+
+            result.failure {
+                filename = "fail"
+            }
+        }
+    }
+
+    fun getDescription() {
+        var url = searchURL + filename + ".txt"
+
+        Fuel.get(url).response {
+            request, response, result ->
+            result.success {
+                var json = String(response.data)
+                json = json.substring(1, json.length - 1)
+                val jsonString = JsonParser().parse(json)
+                var jsonObject = jsonString.asJsonObject
+                var descriptionURL = jsonObject.getAsJsonObject("guid").get("rendered").toString()
+                descriptionURL = descriptionURL.substring(1, descriptionURL.length - 1)
+
+                Fuel.get(descriptionURL).response {
+                    request, response, result ->
+                    result.success {
+                        featureTitleTV.setText(String(response.data))
+                    }
+                }
+            }
+            result.failure {
+                featureTitleTV.text = "Unable to retrieve data"
+            }
+        }
+    }
+
+    fun getAudio() {
+        var url = searchURL + filename + ".mp3"
+        Fuel.get(url).response {
+            request, response, result ->
+            result.success {
+                var json = String(response.data)
+                json = json.substring(1, json.length - 1)
+                val jsonString = JsonParser().parse(json)
+                var jsonObject = jsonString.asJsonObject
+                audioURL = jsonObject.getAsJsonObject("guid").get("rendered").toString()
+                audioURL = audioURL.substring(1, audioURL.length - 1)
+
+                var F = File(getFilesDir(), "test.mp3")
+                Fuel.download(audioURL).destination { response, url ->
+                    F
+                }.response { req, res, result ->
+
+                }
+
+                audioPlayer = MediaPlayer()
+                audioPlayer.setDataSource(F.absolutePath)
+                audioPlayer.prepare()
+                audio_setup()
+            }
+        }
+    }
+
+    fun getImage() {
+        var url = searchURL + imageName + ".jpeg"
+
+        Fuel.get(url).response {
+            request, response, result ->
+            result.success {
+                var json = String(response.data)
+                json = json.substring(1, json.length - 1)
+                val jsonString = JsonParser().parse(json)
+                var jsonObject = jsonString.asJsonObject
+                imageURL = jsonObject.getAsJsonObject("guid").get("rendered").toString()
+                imageURL = imageURL.substring(1, imageURL.length - 1)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,43 +167,36 @@ class DescriptionActivity : AppCompatActivity() {
         audioSlider = findViewById(R.id.audio_seekbar)
         playButton = findViewById(R.id.audio_button)
 
-    }
+        getJson()
+}
 
     override fun onResume() {
         super.onResume()
 
-        var beaconID = intent.getIntExtra(BEACON_ID, -1)
-        var feature: Feature? = null
-        var features = HttpClient.getFeatures()
-        features.forEach {
-            if (it.beaconID == beaconID){
-                feature = it
-            }
+        // hacky
+        while (filename == "") {
         }
 
+        getImage()
 
-        descriptionTitleTV.text = feature?.name
-        featureTitleTV.text = feature?.description
+//        while (imageURL == "") {
+//
+//        }
+//
+//        var image = File(getFilesDir(), "image.jpg")
+//        Fuel.download(imageURL).destination { response, url ->
+//            image
+//        }.response { req, res, result ->
+//
+//        }
 
+        getDescription()
+        getAudio()
 
-        val uri = "@drawable/"+feature?.imageLink
-        val imageResource = resources.getIdentifier(uri, null, packageName)
-        val res = resources.getDrawable(imageResource)
-        featureImage.setImageDrawable(res)
+//        var params = featureImage.layoutParams
+//        featureImage.setImageURI(Uri.fromFile(image))
+//        featureImage.layoutParams = params
 
-
-        val audio_uri:String = "@raw/"+feature?.audioLink
-        val audio_resource = resources.getIdentifier(audio_uri, null, packageName)
-        audioPlayer = MediaPlayer.create(this, audio_resource)
-        audio_setup()
-
-
-        //featureImage.setImageDrawable(feature?.imageLink);
-        //featureImage.setImageDrawable()
-        //change image here
-
-
-        Log.d(TAG, "Found feature: " + feature?.name)
     }
 
 
@@ -148,8 +263,14 @@ class DescriptionActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         seekHandler.removeCallbacks(run)
-        audioPlayer.stop()
-        audioPlayer.release()
+
+        try {
+            audioPlayer.stop()
+            audioPlayer.release()
+        }
+        catch(e: Exception) {
+
+        }
     }
 }
 

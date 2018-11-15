@@ -16,7 +16,6 @@ class Preferences (context: Context) {
         val prefs: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
 
         fun getLang(): String {
-            //return prefs.getString(LANGUAGE, "english")
             return prefs.getString(LANGUAGE, "English")
         }
 
