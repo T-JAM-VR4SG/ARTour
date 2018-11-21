@@ -7,6 +7,15 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+
+    <!-- Both "AR Optional" and "AR Required" apps require CAMERA permission. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- Indicates that app requires ARCore ("AR Required"). Ensures app is only
+     visible in the Google Play Store on devices that support ARCore.
+     For "AR Optional" apps remove this line. -->
+    <uses-feature android:name="android.hardware.camera.ar" />
+
+
     <application
         android:name=".ARTourApplication"
         android:allowBackup="true"
@@ -35,6 +44,15 @@
         <activity android:name=".Activities.FeaturesInRangeActivity"></activity>
         <activity android:name=".Activities.LanguageActivity"></activity>
         <activity android:name=".Activities.DescriptionActivity"
-            android:theme="@style/DescriptionActivityTheme" />
+            android:theme="@style/DescriptionActivityTheme"/>
+        <activity android:name=".Activities.HelloSceneformActivity"></activity>
+
+
+        <!-- Indicates that app requires ARCore ("AR Required"). Causes Google
+     Play Store to download and install ARCore along with the app.
+     For an "AR Optional" app, specify "optional" instead of "required".-->
+        <meta-data android:name="com.google.ar.core" android:value="required" />
+
+
     </application>
 </manifest>

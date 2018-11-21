@@ -54,7 +54,8 @@ class FeaturesInRangeActivity : NavigableActivity() {
             //httpClient.getFeatures to get intent
 
 
-            var intent = Intent(this,DescriptionActivity::class.java)
+            //var intent = Intent(this,DescriptionActivity::class.java)
+            var intent = Intent(this,HelloSceneformActivity::class.java)
             intent.putExtra(DescriptionActivity.BEACON_ID, feature.beaconID);
             startActivity(intent)
         }

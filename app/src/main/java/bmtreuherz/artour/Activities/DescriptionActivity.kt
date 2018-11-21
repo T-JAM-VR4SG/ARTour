@@ -1,5 +1,9 @@
 package bmtreuherz.artour.Activities
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.hardware.Camera
+import android.hardware.camera2.CameraDevice
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,12 +19,15 @@ import com.github.kittinunf.result.failure
 import com.google.gson.JsonParser
 import java.io.File
 import android.net.Uri
+import android.view.SurfaceHolder
+import android.view.ViewGroup
 
 class DescriptionActivity : AppCompatActivity() {
 
     private lateinit var featureTitleTV: TextView
     private lateinit var descriptionTitleTV: TextView
     private lateinit var featureImage: ImageView
+
 
     //audio variables
     private lateinit var audioSlider: SeekBar
@@ -167,6 +174,7 @@ class DescriptionActivity : AppCompatActivity() {
         audioSlider = findViewById(R.id.audio_seekbar)
         playButton = findViewById(R.id.audio_button)
 
+
         getJson()
 }
 
@@ -272,6 +280,58 @@ class DescriptionActivity : AppCompatActivity() {
 
         }
     }
+
+
+    private fun checkCameraHardware(context: Context) : Boolean {
+
+        if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            return true
+        }
+        else
+            return false
+    }
+
+
+    fun getCameraInstance(): Camera? {
+        return try {
+
+            //releaseCameraAndPreview()
+            //mCamera = Camera.open()
+            //true
+            Camera.open()
+        }
+        catch (e: Exception) {
+            null
+        }
+    }
+
+
+/*
+    private fun safeCameraOpen(id: Int): Boolean {
+        return try {
+            releaseCameraAndPreview()
+            mCamera = Camera.open(id)
+            true
+        } catch (e: Exception) {
+            Log.e(getString(R.string.app_name), "failed to open Camera")
+            e.printStackTrace()
+            false
+        }
+    }
+
+    private fun releaseCameraAndPreview() {
+        mPreview?.setCamera(null)
+        mCamera?.also { camera ->
+            camera.release()
+            mCamera = null
+        }
+    }
+    */
+
+
+
+
 }
+
 
 
