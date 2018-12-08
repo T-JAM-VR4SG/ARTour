@@ -18,6 +18,12 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.google.ar.sceneform.rendering.ViewRenderable;
+import bmtreuherz.artour.Activities.DescriptionActivity;
+import java.io.File;
+import android.media.MediaPlayer;
+import com.github.kittinunf.fuel.Fuel;
+import java.lang.System;
 
 import bmtreuherz.artour.R;
 
@@ -32,6 +38,17 @@ public class HelloSceneformActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
+    private ViewRenderable testViewRenderable;
+
+    private DescriptionActivity test = new DescriptionActivity();
+
+//    public void Test() {
+//        File f = new File(getFilesDir(), "test.mp3");
+//        Fuel.download("http://sites.clas.ufl.edu/vrsocialgood/files/2018/11/en_marston.mp3")
+//                .destination({
+//            response, url -> f
+//        });
+//    }
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -39,6 +56,9 @@ public class HelloSceneformActivity extends AppCompatActivity {
     // FutureReturnValueIgnored is not valid
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        test.setAudioURL("http://sites.clas.ufl.edu/vrsocialgood/files/2018/11/en_marston.mp3");
+//        test.getAudio();
 
         if (!checkIsSupportedDeviceOrFinish(this)) {
             return;
@@ -75,9 +95,22 @@ public class HelloSceneformActivity extends AppCompatActivity {
 
                     // Create the transformable andy and add it to the anchor.
                     TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
+//                    andy.setParent(anchorNode);
+//                    andy.setRenderable(andyRenderable);
+//                    andy.select();
+//
+                    ViewRenderable.builder()
+                            .setView(this, R.layout.sceneform)
+                            .build()
+                            .thenAccept(renderable -> testViewRenderable = renderable);
+
                     andy.setParent(anchorNode);
-                    andy.setRenderable(andyRenderable);
+                    andy.setRenderable(testViewRenderable);
                     andy.select();
+
+                    //System.out.println("Audio: " + test.getAudioURL());
+
+                    //test.audioPlayer.start();
                 });
     }
 
@@ -108,5 +141,10 @@ public class HelloSceneformActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }
