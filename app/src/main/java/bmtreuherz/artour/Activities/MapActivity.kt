@@ -9,8 +9,6 @@ import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.content.DialogInterface
 import bmtreuherz.artour.R
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -27,12 +25,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.ClusterManager
 import java.time.LocalTime
-import com.google.android.gms.location.GeofencingClient
-import com.google.android.gms.location.GeofencingRequest
-import com.google.android.gms.location.Geofence
 import android.app.PendingIntent
 import android.app.IntentService
+import com.google.android.gms.location.*
 import kotlin.coroutines.experimental.coroutineContext
+import java.util.concurrent.ConcurrentSkipListSet
 
 class GeofenceIntentService : IntentService("GeofenceIntentService") {
     override fun onHandleIntent(p0: Intent?) {
@@ -40,21 +37,30 @@ class GeofenceIntentService : IntentService("GeofenceIntentService") {
         //adds the nearby feature to the features list
         Log.d("FEATURES", "Found one in Range")
 
-        val builder = AlertDialog.Builder(this, R.style.DescriptionActivityTheme)
-        //We will probably want to add vibration to alert user when dialog happens
-        builder.setTitle("Nearby Location Detected")
-        builder.setMessage("Bring up camera view?")
-        builder.setPositiveButton("Yes", { dialogInterface: DialogInterface, i: Int ->
-            //Take the user to desription page for specific beacon here
+        val event = GeofencingEvent.fromIntent(p0)
 
-            var intent = Intent (this, HelloSceneformActivity::class.java)
+        var triggerList = event.triggeringGeofences
+        var triggerIds = ConcurrentSkipListSet<Int>()
+        for (item in triggerList) {
+            triggerIds.add(item.requestId.toInt())
+            println(item.requestId)
+        }
+
+        ARTourApplication.beaconsInRange = triggerIds
+
+
+        if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+            var intent = Intent (this@GeofenceIntentService, AlertActivity::class.java)
             startActivity(intent)
 
-        })
-        builder.setNegativeButton("No", { dialogInterface: DialogInterface, i: Int ->
-            //If the user clicks no, exit the dialog and do nothing
-        })
-        builder.show()
+            //ARTourApplication.beaconsInRange.add(1)
+            //
+        }
+
+        else if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+            //ARTourApplication.beaconsInRange.remove(2)
+        }
+
     }
 }
 
