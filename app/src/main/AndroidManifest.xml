@@ -52,6 +52,7 @@
      Play Store to download and install ARCore along with the app.
      For an "AR Optional" app, specify "optional" instead of "required".-->
         <meta-data android:name="com.google.ar.core" android:value="required" />
+        <service android:name=".Activities.GeofenceIntentService"/>
 
 
     </application>

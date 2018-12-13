@@ -26,8 +26,37 @@ import java.util.jar.Manifest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.ClusterManager
-
 import java.time.LocalTime
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.GeofencingRequest
+import com.google.android.gms.location.Geofence
+import android.app.PendingIntent
+import android.app.IntentService
+import kotlin.coroutines.experimental.coroutineContext
+
+class GeofenceIntentService : IntentService("GeofenceIntentService") {
+    override fun onHandleIntent(p0: Intent?) {
+        println("Entered")
+        //adds the nearby feature to the features list
+        Log.d("FEATURES", "Found one in Range")
+
+        val builder = AlertDialog.Builder(this, R.style.DescriptionActivityTheme)
+        //We will probably want to add vibration to alert user when dialog happens
+        builder.setTitle("Nearby Location Detected")
+        builder.setMessage("Bring up camera view?")
+        builder.setPositiveButton("Yes", { dialogInterface: DialogInterface, i: Int ->
+            //Take the user to desription page for specific beacon here
+
+            var intent = Intent (this, HelloSceneformActivity::class.java)
+            startActivity(intent)
+
+        })
+        builder.setNegativeButton("No", { dialogInterface: DialogInterface, i: Int ->
+            //If the user clicks no, exit the dialog and do nothing
+        })
+        builder.show()
+    }
+}
 
 class MapActivity : NavigableActivity() {
     override fun getCurrentMenuItemID(): Int {
@@ -53,7 +82,7 @@ class MapActivity : NavigableActivity() {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
-    private var onMapReadyCallback = object: OnMapReadyCallback{
+    private var onMapReadyCallback = object : OnMapReadyCallback {
         override fun onMapReady(googleMap: GoogleMap) {
 
             map = googleMap
@@ -67,9 +96,19 @@ class MapActivity : NavigableActivity() {
         }
     }
 
+    private lateinit var geofencingClient: GeofencingClient
+
+    private val geofencePendingIntent: PendingIntent by lazy {
+        val intent = Intent(this, GeofenceIntentService::class.java)
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
+        // addGeofences() and removeGeofences().
+        PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        geofencingClient = LocationServices.getGeofencingClient(this)
 
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
@@ -78,7 +117,7 @@ class MapActivity : NavigableActivity() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         //Sets instructions for what to do when you get close to a beacon on map screen and gives alertdialog
-        beaconEventBroadcastReceiver = BeaconEventBroadcastReceiver(object: BeaconEventBroadcastReceiver.BeaconEventDelegate{
+        beaconEventBroadcastReceiver = BeaconEventBroadcastReceiver(object : BeaconEventBroadcastReceiver.BeaconEventDelegate {
             override fun onEnteredRange(beaconID: Int) {
                 //adds the nearby feature to the features list
                 Log.d("FEATURES", "Found one in Range")
@@ -117,7 +156,7 @@ class MapActivity : NavigableActivity() {
         LocalBroadcastManager.getInstance(this).registerReceiver(beaconEventBroadcastReceiver, filter)
 
         // Check and request bluetooth permissions
-        if (!PermissionHelper.hasScanningPermissions(this)){
+        if (!PermissionHelper.hasScanningPermissions(this)) {
             return
         }
 
@@ -133,7 +172,7 @@ class MapActivity : NavigableActivity() {
 
     private fun setUpMap() {
         if (ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
             return
@@ -143,7 +182,7 @@ class MapActivity : NavigableActivity() {
         map.isMyLocationEnabled = true
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
 
-        if(Build.VERSION.SDK_INT > 26 && (LocalTime.now().hour >= 20 || LocalTime.now().hour <= 6))
+        if (Build.VERSION.SDK_INT > 26 && (LocalTime.now().hour >= 20 || LocalTime.now().hour <= 6))
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.dark))
         else if (Build.VERSION.SDK_INT > 26 && (LocalTime.now().hour > 20 || LocalTime.now().hour > 6))
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.light))
@@ -186,9 +225,52 @@ class MapActivity : NavigableActivity() {
                     locations[i].name,
                     null)
             mClusterManager?.addItem(item)
+            addGeomarkers(i, locations[i].lat, locations[i].long)
         }
 
 
     }
 
+    @SuppressWarnings("MissingPermission")
+    fun addGeomarkers(id: Int, lat: Double, long: Double) {
+        var toCreate = Geofence.Builder()
+                // Set the request ID of the geofence. This is a string to identify this
+                // geofence.
+                .setRequestId(id.toString())
+
+                // Set the circular region of this geofence. 10 meters
+                .setCircularRegion(
+                        lat,
+                        long,
+                        20f
+                )
+
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+
+
+                // Set the transition types of interest. Alerts are only generated for these
+                // transition. We track entry and exit transitions in this sample.
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+
+                // Create the geofence.
+                .build()
+
+        var toAdd = GeofencingRequest.Builder().apply {
+            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            addGeofence(toCreate)
+        }.build()
+
+        geofencingClient.addGeofences(toAdd, geofencePendingIntent).run {
+            addOnSuccessListener {
+                // Geofences added
+                // ...
+                println("Success")
+            }
+            addOnFailureListener {
+                // Failed to add geofences
+                // ...
+                println("Fail")
+            }
+        }
+    }
 }
