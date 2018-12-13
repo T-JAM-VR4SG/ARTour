@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ARTour.iml" filepath="$PROJECT_DIR$/ARTour.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/ARTour-app.iml" filepath="$PROJECT_DIR$/app/ARTour-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Master_Project-ARTour.iml" filepath="$PROJECT_DIR$/Master_Project-ARTour.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
