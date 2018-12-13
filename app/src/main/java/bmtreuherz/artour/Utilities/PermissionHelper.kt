@@ -19,25 +19,15 @@ object PermissionHelper {
         var bluetoothManager = activity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         var bluetoothAdapter = bluetoothManager.adapter
 
-//        if (bluetoothAdapter == null){
-//            Log.d("Permission Helper", "Does not support bluetooth. Pretending all beacons are in range.")
-//            // Bluetooth is not supported. To mock bluetooth discovery, pretend that all beacons are in range
-//            var features = HttpClient.getFeatures()
-//            features
+
+//        Log.d("Permission Helper", "Does not support bluetooth. Pretending all beacons are in range.")
+//        // Bluetooth is not supported. To mock bluetooth discovery, pretend that all beacons are in range
+//        var features = HttpClient.getFeatures()
+//        features
 //                .forEach {
 //                    ARTourApplication.beaconsInRange.add(it.beaconID)
 //                }
-//            return false
-//        }
-
-        Log.d("Permission Helper", "Does not support bluetooth. Pretending all beacons are in range.")
-        // Bluetooth is not supported. To mock bluetooth discovery, pretend that all beacons are in range
-        var features = HttpClient.getFeatures()
-        features
-                .forEach {
-                    ARTourApplication.beaconsInRange.add(it.beaconID)
-                }
-        return false
+//        return false
 
         // Check if bluetooth is enabled and request if not
         if (bluetoothAdapter?.isEnabled != true){

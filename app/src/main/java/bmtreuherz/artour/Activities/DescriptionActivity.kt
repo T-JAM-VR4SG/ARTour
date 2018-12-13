@@ -32,7 +32,7 @@ class DescriptionActivity : AppCompatActivity() {
     //audio variables
     private lateinit var audioSlider: SeekBar
     private lateinit var playButton: Button
-    private lateinit var audioPlayer: MediaPlayer
+    lateinit var audioPlayer: MediaPlayer
     var seekHandler = Handler()
     var wasPlaying = false
 
@@ -143,6 +143,7 @@ class DescriptionActivity : AppCompatActivity() {
                 audioPlayer = MediaPlayer()
                 audioPlayer.setDataSource(F.absolutePath)
                 audioPlayer.prepare()
+                audioPlayer.start()
                 audio_setup()
             }
         }
@@ -176,38 +177,14 @@ class DescriptionActivity : AppCompatActivity() {
 
 
         getJson()
-}
 
-    override fun onResume() {
-        super.onResume()
-
-        // hacky
         while (filename == "") {
         }
-
-        getImage()
-
-//        while (imageURL == "") {
-//
-//        }
-//
-//        var image = File(getFilesDir(), "image.jpg")
-//        Fuel.download(imageURL).destination { response, url ->
-//            image
-//        }.response { req, res, result ->
-//
-//        }
 
         getDescription()
         getAudio()
 
-//        var params = featureImage.layoutParams
-//        featureImage.setImageURI(Uri.fromFile(image))
-//        featureImage.layoutParams = params
-
     }
-
-
 
     //audio functions
     fun audio_setup() {
@@ -280,57 +257,6 @@ class DescriptionActivity : AppCompatActivity() {
 
         }
     }
-
-
-    private fun checkCameraHardware(context: Context) : Boolean {
-
-        if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            return true
-        }
-        else
-            return false
-    }
-
-
-    fun getCameraInstance(): Camera? {
-        return try {
-
-            //releaseCameraAndPreview()
-            //mCamera = Camera.open()
-            //true
-            Camera.open()
-        }
-        catch (e: Exception) {
-            null
-        }
-    }
-
-
-/*
-    private fun safeCameraOpen(id: Int): Boolean {
-        return try {
-            releaseCameraAndPreview()
-            mCamera = Camera.open(id)
-            true
-        } catch (e: Exception) {
-            Log.e(getString(R.string.app_name), "failed to open Camera")
-            e.printStackTrace()
-            false
-        }
-    }
-
-    private fun releaseCameraAndPreview() {
-        mPreview?.setCamera(null)
-        mCamera?.also { camera ->
-            camera.release()
-            mCamera = null
-        }
-    }
-    */
-
-
-
-
 }
 
 
